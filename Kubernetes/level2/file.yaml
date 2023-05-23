@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: static-web
+  name: static-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: static-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: static-web
+    spec:
+      volumes:
+      - name: html
+        emptyDir: {}
+      initContainers:
+      - name: download-html
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+        - wget https://www.free-css.com/assets/files/free-css-templates/download/page291/gamepad.zip -O /tmp/gamepad.zip && unzip /tmp/gamepad.zip -d /html && cp /html/index.html /usr/share/nginx/html && chmod -R 755 /html
+        volumeMounts:
+        - name: html
+          mountPath: /html
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-web
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080
+  selector:
+    app: static-web

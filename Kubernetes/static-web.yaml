@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: static-web
+  name: static-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: static-web
+    spec:
+      volumes:
+      - name: static-web
+        emptyDir: {}
+      initContainers:
+      - image: busybox
+        name: busybox
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/html
+          name: static-web
+        command:
+        - "ash"
+        - "-c"
+        - "wget https://www.free-css.com/assets/files/free-css-templates/download/page291/dozecafe.zip && unzip dozecafe.zip -d dozecafe && cp -r dozecafe/html/* /data/html/"
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: static-web
+status: {}
