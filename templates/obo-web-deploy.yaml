@@ -26,6 +26,7 @@ spec:
         name: obo-web
         resources: {}
         command: ["sleep", "1000"]
+          #command: ["java", "-Dspring.datasource.url=jdbc:mysql://10.0.2.15:3306/obo", "-jar", "target/obo-0.0.1-SNAPSHOT.jar"]
         volumeMounts:
         - name: web-config
           mountPath: /techmaster-obo-web/src/main/resources/application-dev.properties
